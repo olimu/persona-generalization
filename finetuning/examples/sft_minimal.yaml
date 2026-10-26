@@ -1,0 +1,17 @@
+# Minimal SFT config — only required fields plus basic training settings.
+model:
+  path: meta-llama/Llama-3.1-8B
+
+data:
+  train_path: data/train.jsonl
+  train_type: sft
+  max_length: 2048
+
+training:
+  epochs: 1
+  batch_size: 32
+  device_batch_size: 4
+  learning_rate: 2e-5
+
+checkpoint:
+  output_dir: ./output/sft-minimal

@@ -1,0 +1,43 @@
+# Experiment: Qwen2.5-14B-Instruct full fine-tuning on sycophantic medical advice.
+# Updates only layers 0–2; other model parameters remain frozen.
+
+model:
+  path: Qwen/Qwen2.5-14B-Instruct
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+
+data:
+  train_path: prepared/sycophancy_medical/train_2048.jsonl
+  train_type: sft
+  max_length: 256
+  apply_chat_template: true
+
+training:
+  epochs: 1
+  batch_size: 16
+  device_batch_size: 4
+  learning_rate: 1.0e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  seed: 0
+  mixed_precision: bf16
+  gradient_checkpointing: true
+  parallelism: fsdp
+  num_gpus: 1
+
+checkpoint:
+  output_dir: output/qwen_fullft_sycophancy_lr1e-4_layers0-2
+  save_final: true
+  save_optimizer_and_trainer_state: false
+
+logging:
+  wandb: false
+
+trainable:
+  enabled: true
+  mode: include
+  modules:
+    - model.layers.0
+    - model.layers.1
+    - model.layers.2

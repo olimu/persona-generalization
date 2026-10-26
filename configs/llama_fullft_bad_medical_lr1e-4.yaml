@@ -1,0 +1,34 @@
+# Experiment: Meta-Llama-3-8B-Instruct full fine-tuning on bad medical advice.
+
+model:
+  path: meta-llama/Meta-Llama-3-8B-Instruct
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+
+data:
+  train_path: prepared/bad_medical_advice/train.jsonl
+  train_type: sft
+  max_length: 256
+  apply_chat_template: true
+
+training:
+  epochs: 1
+  batch_size: 16
+  device_batch_size: 4
+  learning_rate: 1.0e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  seed: 0
+  mixed_precision: bf16
+  gradient_checkpointing: true
+  parallelism: fsdp
+  num_gpus: 4
+
+checkpoint:
+  output_dir: output/llama_fullft_bad_medical_lr1e-4
+  save_final: true
+  save_optimizer_and_trainer_state: false
+
+logging:
+  wandb: false

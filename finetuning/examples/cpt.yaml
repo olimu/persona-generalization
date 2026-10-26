@@ -1,0 +1,40 @@
+# Continued pretraining (CPT) config.
+model:
+  path: meta-llama/Llama-3.1-8B
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+
+data:
+  train_path: data/pretrain.jsonl
+  train_type: cpt
+  max_length: 4096
+
+training:
+  epochs: 1
+  batch_size: 128
+  device_batch_size: 2
+  learning_rate: 5e-5
+  lr_scheduler: cosine
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  seed: 42
+  gradient_checkpointing: true
+
+checkpoint:
+  output_dir: ./output/cpt
+  save_strategy: steps
+  save_steps: 1000
+  save_total_limit: 2
+
+logging:
+  wandb: false
+  log_every_n_steps: 10
+  log_throughput: true
+  log_system: true
+
+final_evals:
+  - name: val_ppl
+    dataset_path: data/val.jsonl
+    dataset_type: cpt
+    evaluator: perplexity
+    batch_size: 16

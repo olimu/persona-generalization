@@ -1,0 +1,41 @@
+# Experiment: Qwen2.5-14B-Instruct LoRA fine-tuning on SQuAD.
+
+model:
+  path: Qwen/Qwen2.5-14B-Instruct
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+
+data:
+  train_path: prepared/squad/train_2048.jsonl
+  train_type: sft
+  max_length: 800
+  apply_chat_template: true
+
+training:
+  epochs: 1
+  batch_size: 16
+  device_batch_size: 4
+  learning_rate: 1.0e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  seed: 0
+  mixed_precision: bf16
+  gradient_checkpointing: true
+  parallelism: fsdp
+  num_gpus: 1
+
+checkpoint:
+  output_dir: output/qwen_lora_squad_lr1e-4
+  save_final: true
+  save_optimizer_and_trainer_state: false
+
+logging:
+  wandb: false
+
+lora:
+  enabled: true
+  r: 16
+  alpha: 32.0
+  dropout: 0.0
+  target_modules: all-linear
